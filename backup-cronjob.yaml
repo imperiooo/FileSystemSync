@@ -1,0 +1,26 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: backup-cronjob
+spec:
+  schedule: "*/5 * * * *"  # Schedule your backup job after every 5 minutes
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: backup-service
+            image: backup-service:latest  # Use the image you built earlier
+            volumeMounts:
+            - name: backup-data
+              mountPath: /app/backupFiles
+            - name: google-credentials
+              mountPath: /app/credentials
+          restartPolicy: OnFailure
+          volumes:
+          - name: backup-data
+            persistentVolumeClaim:
+              claimName: backup-data-pvc
+          - name: google-credentials
+            secret:
+              secretName: google-credentials

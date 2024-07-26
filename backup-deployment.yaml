@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backup-service-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backup-service
+  template:
+    metadata:
+      labels:
+        app: backup-service
+    spec:
+      containers:
+      - name: backup-service
+        image: backup-service:latest  # Use the locally available Docker image
+        volumeMounts:
+        - name: google-credentials
+          mountPath: /app/credentials
+      volumes:
+      - name: google-credentials
+        secret:
+          secretName: google-credentials
